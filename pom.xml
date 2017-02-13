@@ -5,12 +5,12 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.springframework.samples</groupId>
   <artifactId>spring-petclinic</artifactId>
-  <version>1.5.1</version>
+  <version>1.4.2</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.1.RELEASE</version>
+    <version>1.4.2.RELEASE</version>
   </parent>
   <name>petclinic</name>
 
@@ -28,9 +28,11 @@
     <wro4j.version>1.8.0</wro4j.version>
 
     <thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
+    <thymeleaf-layout-dialect.version>2.0.4</thymeleaf-layout-dialect.version>
 
     <cobertura.version>2.7</cobertura.version>
 
+    <docker.image.prefix>spring-petclinic</docker.image.prefix>
   </properties>
 
   <dependencies>
@@ -56,8 +58,8 @@
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
       <exclusions>
       	<exclusion>
-      		<groupId>nz.net.ultraq.thymeleaf</groupId>
-      		<artifactId>thymeleaf-layout-dialect</artifactId>
+      		<groupId>org.codehaus.groovy</groupId>
+      		<artifactId>groovy</artifactId>
       	</exclusion>
       </exclusions>
     </dependency>
@@ -77,6 +79,16 @@
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
       <scope>runtime</scope>
+    </dependency>
+
+    <!-- EhCache -->
+    <dependency>
+      <groupId>javax.cache</groupId>
+      <artifactId>cache-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ehcache</groupId>
+      <artifactId>ehcache</artifactId>
     </dependency>
 
     <!-- webjars -->
@@ -195,6 +207,22 @@
             <version>${webjars-bootstrap.version}</version>
           </dependency>
         </dependencies>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>docker-maven-plugin</artifactId>
+        <version>0.4.11</version>
+        <configuration>
+          <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+          <dockerDirectory>src/main/docker</dockerDirectory>
+          <resources>
+            <resource>
+              <targetPath>/</targetPath>
+              <directory>${project.build.directory}</directory>
+              <include>${project.build.finalName}.jar</include>
+            </resource>
+          </resources>
+        </configuration>
       </plugin>
     </plugins>
   </build>
